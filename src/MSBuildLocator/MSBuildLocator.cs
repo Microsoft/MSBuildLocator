@@ -15,7 +15,7 @@ using System.Runtime.Loader;
 
 namespace Microsoft.Build.Locator
 {
-    public static class MSBuildLocator
+    public static partial class MSBuildLocator
     {
         private const string MSBuildPublicKeyToken = "b03f5f7f11d50a3a";
 
@@ -139,13 +139,20 @@ namespace Microsoft.Build.Locator
         /// </param>
         public static void RegisterMSBuildPath(string msbuildPath)
         {
-            RegisterMSBuildPath(new string[] {
+            var searchPaths = new List<string>
+            {
                 msbuildPath
+            };
+
 #if NET46
+            if (!IsRunningOnMono)
+            {
                 // Finds and loads NuGet assemblies if msbuildPath is in a VS installation
-                , Path.GetFullPath(Path.Combine(msbuildPath, "..", "..", "..", "Common7", "IDE", "CommonExtensions", "Microsoft", "NuGet"))
+                searchPaths.Add(Path.GetFullPath(Path.Combine(msbuildPath, "..", "..", "..", "Common7", "IDE", "CommonExtensions", "Microsoft", "NuGet")));
+            }
 #endif
-            });
+
+            RegisterMSBuildPath(searchPaths.ToArray());
         }
 
         /// <summary>
@@ -179,10 +186,10 @@ namespace Microsoft.Build.Locator
                 throw new AggregateException("Search paths for MSBuild assemblies cannot be null and must contain non-whitespace characters.", nullOrWhiteSpaceExceptions);
             }
 
-            IEnumerable<string> paths = msbuildSearchPaths.Where(path => !Directory.Exists(path));
-            if (paths.FirstOrDefault() == null)
+            IEnumerable<string> nonExistantPaths = msbuildSearchPaths.Where(path => !Directory.Exists(path));
+            if (nonExistantPaths.Any())
             {
-                throw new AggregateException($"A directory or directories in \"{nameof(msbuildSearchPaths)}\" do not exist", paths.Select(path => new ArgumentException($"Directory \"{path}\" does not exist", nameof(msbuildSearchPaths))));
+                throw new AggregateException($"A directory or directories in \"{nameof(msbuildSearchPaths)}\" do not exist", nonExistantPaths.Select(path => new ArgumentException($"Directory \"{path}\" does not exist", nameof(msbuildSearchPaths))));
             }
 
             if (!CanRegister)
@@ -328,6 +335,14 @@ namespace Microsoft.Build.Locator
 
         private static IEnumerable<VisualStudioInstance> GetInstances(VisualStudioInstanceQueryOptions options)
         {
+            if (options.DiscoveryTypes.HasFlag(DiscoveryType.Mono) && IsRunningOnMono)
+            {
+                foreach(var instance in GetMonoMSBuildInstances())
+                    yield return instance;
+
+                yield break;
+            }
+
 #if NET46
             var devConsole = GetDevConsoleInstance();
             if (devConsole != null)
