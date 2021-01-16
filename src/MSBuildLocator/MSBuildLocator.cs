@@ -28,7 +28,7 @@ namespace Microsoft.Build.Locator
             "Microsoft.Build.Utilities.Core",
         };
 
-#if NET46
+#if NET472
         private static ResolveEventHandler s_registeredHandler;
 #else
         private static Func<AssemblyLoadContext, AssemblyName, Assembly> s_registeredHandler;
@@ -210,7 +210,7 @@ namespace Microsoft.Build.Locator
             var loadedAssemblies = new Dictionary<string, Assembly>();
 
             // Saving the handler in a static field so it can be unregistered later.
-#if NET46
+#if NET472
             s_registeredHandler = (_, eventArgs) =>
             {
                 var assemblyName = new AssemblyName(eventArgs.Name);
@@ -273,7 +273,7 @@ namespace Microsoft.Build.Locator
                 throw new InvalidOperationException(error);
             }
 
-#if NET46
+#if NET472
             AppDomain.CurrentDomain.AssemblyResolve -= s_registeredHandler;
 #else
             AssemblyLoadContext.Default.Resolving -= s_registeredHandler;
@@ -331,7 +331,7 @@ namespace Microsoft.Build.Locator
 
         private static IEnumerable<VisualStudioInstance> GetInstances(VisualStudioInstanceQueryOptions options)
         {
-#if NET46
+#if NET472
             var devConsole = GetDevConsoleInstance();
             if (devConsole != null)
                 yield return devConsole;
@@ -348,7 +348,7 @@ namespace Microsoft.Build.Locator
 #endif
         }
 
-#if NET46
+#if NET472
         private static VisualStudioInstance GetDevConsoleInstance()
         {
             var path = Environment.GetEnvironmentVariable("VSINSTALLDIR");
