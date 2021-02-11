@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <RootNamespace>MSBuildLocatorAnalyzer</RootNamespace>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+	
+  <PropertyGroup>
+    <PackageId>Microsoft.Build.Locator.Analyzer.CodeFixes</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Microsoft</Authors>
+    <RepositoryUrl>https://github.com/microsoft/MSBuildLocator</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>A code fix for the MSBuildLocator analyzer.</Description>
+    <PackageReleaseNotes>Code fix for the analyzer.</PackageReleaseNotes>
+    <Copyright>Copyright</Copyright>
+    <PackageTags>MSBuild, MSBuildLocator, Microsoft Build, code fix, analyzers</PackageTags>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MSBuildLocatorAnalyzer\MSBuildLocatorAnalyzer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="CodeFixResources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="CodeFixResources.resx" />
+    <EmbeddedResource Update="CodeFixResources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="CodeFixResources.Designer.cs" />
+  </ItemGroup>
+
+</Project>
