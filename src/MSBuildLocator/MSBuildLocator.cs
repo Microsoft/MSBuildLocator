@@ -372,7 +372,7 @@ namespace Microsoft.Build.Locator
 
                 if(version != null)
                 {
-                    return new VisualStudioInstance("DEVCONSOLE", path, version, DiscoveryType.DeveloperConsole);
+                    return new VisualStudioInstance("DEVCONSOLE", path, version, DiscoveryType.DeveloperConsole, false);
                 }
             }
 

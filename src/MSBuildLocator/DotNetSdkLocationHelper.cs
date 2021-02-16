@@ -64,7 +64,8 @@ namespace Microsoft.Build.Locator
                 name: ".NET Core SDK",
                 path: dotNetSdkPath,
                 version: new Version(major, minor, patch),
-                discoveryType: DiscoveryType.DotNetSdk);
+                discoveryType: DiscoveryType.DotNetSdk,
+                true);
         }
 
         public static IEnumerable<VisualStudioInstance> GetInstances(string workingDirectory)
